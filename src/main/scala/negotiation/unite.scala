@@ -1,3 +1,5 @@
+package negotiation
+
 import java.io.{File, PrintWriter}
 import land.{ByteLand, ByteLandCity}
 import util.readFile
@@ -17,9 +19,10 @@ object unite {
     val writer = new PrintWriter(new File(outputFileName))
 
     for (byteLand <- byteLands) {
-      while (!checkAllyStatusForAllCities(byteLand)) {
+      while (!byteLand.checkAllyStatusForAllCities()) {
         uniteAvailableCities(byteLand)
-        resetEnvoyCountForAllCities(byteLand)
+
+        byteLand.resetEnvoyCountForAllCities()
         turnCount += 1
       }
       writer.println(turnCount)
@@ -32,6 +35,7 @@ object unite {
     for (currentCityId <- byteLand.cityMap.keySet) {
       val currentCity = byteLand.cityMap(currentCityId)
 
+      // Iterate over the adjacent cities and try to negotiate them
       for (adjacentCityId <- currentCity.adjacentCityIds) {
         val adjacentCity = byteLand.cityMap(adjacentCityId)
         negotiate(currentCity, adjacentCity)
@@ -41,6 +45,8 @@ object unite {
 
   def negotiate(currentCity: ByteLandCity, adjacentCity: ByteLandCity): Unit = {
     if (!currentCity.allyCityIds.contains(adjacentCity.cityId)) {
+
+      // Check the envoy count
       if (currentCity.envoyCount != 0) {
         currentCity.envoyCount = 0
         updateDiplomaticRelationShips(currentCity, adjacentCity)
@@ -57,29 +63,21 @@ object unite {
     val adjacentCityAdjacentList = adjacentCity.adjacentCityIds
     var newAdjacentList: Set[Int] = Set()
 
+    // There is an alliance, can be new adjacent cities
     newAdjacentList ++= currentCityAdjacentList ++ adjacentCityAdjacentList
 
+    // Add as ally city
     currentCity.addAllyCity(adjacentCity.cityId)
     adjacentCity.addAllyCity(currentCity.cityId)
 
+    // Decrease enemy count, they are ally
     currentCity.enemyCityCount -= 1
     adjacentCity.enemyCityCount -= 1
 
+    // We should remove related city Id
     currentCity.adjacentCityIds = newAdjacentList - currentCity.cityId
+
+    // We should remove related city Id
     adjacentCity.adjacentCityIds = newAdjacentList - adjacentCity.cityId
-  }
-
-  def resetEnvoyCountForAllCities(byteLand: ByteLand): Unit = {
-    for (cityId <- byteLand.cityMap.keySet) {
-      byteLand.cityMap(cityId).envoyCount = 1
-    }
-  }
-
-  def checkAllyStatusForAllCities(byteLand: ByteLand): Boolean = {
-    for (cityId <- byteLand.cityMap.keySet) {
-      if (byteLand.cityMap(cityId).enemyCityCount != 0)
-        return false
-    }
-    true
   }
 }

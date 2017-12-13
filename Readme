@@ -1,0 +1,22 @@
+The aim of the project is to unite the cities in a country based on the conditions.
+At first all the countries are enemy to each other. Therefore, the enemy count is set to total city count in country - 1.
+In one turn, each country can send one envoy each other. Therefore the envoy count is set to 1.
+
+The algorithm starts by checking the ally status of the cities in the country
+If there is no enemy in each country, the program will be terminated and write the turn count to the file.
+If there is an enemy in a country;
+    Try to unite available cities
+        Pick a city in country
+        Get its adjacent cities
+        Find an enemy adjacent among them
+        Make an alliance with that adjacent
+        Decrease the count of the envoy from a city which has a envoy (It has a chance to be used before).
+        Update the adjacency list of these two countries. (Now they can make an alignment to each other's adjacent cities)
+        Decrease the count of enemy count of these two cities
+        Add these cities as ally to each other
+    Increase the turn count
+    Reset the envoy count for each city in land for next turn
+
+There are two arguments for program
+First argument: input file path
+Second argument: output file path

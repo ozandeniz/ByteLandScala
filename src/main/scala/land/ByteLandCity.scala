@@ -5,11 +5,11 @@ class ByteLandCity(val cityId:Int, var enemyCityCount:Int) {
   var allyCityIds: Set[Int] = Set()
   var adjacentCityIds: Set[Int] = Set()
 
-  def addAllyCity(cityId: Int): Unit = {
+  def addAllyCity(cityId: Int){
     allyCityIds += cityId
   }
 
-  def addAdjacentCity(cityId: Int): Unit = {
+  def addAdjacentCity(cityId: Int){
     adjacentCityIds += cityId
   }
 }
