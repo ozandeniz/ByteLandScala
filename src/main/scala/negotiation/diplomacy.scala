@@ -1,22 +1,13 @@
 package negotiation
 
-import java.io.{File, PrintWriter}
 import land.{ByteLand, ByteLandCity}
-import util.readFile
 import scala.collection.mutable.ListBuffer
 
-object unite {
-  def main(args: Array[String]): Unit = {
-    val inputFileName: String = args(0)
-    val outputFileName: String = args(1)
-    val byteLands = readFile.readByteLandInfo(inputFileName)
-
-    startNegotiation(byteLands, outputFileName)
-  }
-
-  def startNegotiation(byteLands: ListBuffer[ByteLand], outputFileName: String): Unit = {
+object diplomacy {
+  def runDiplomacy(byteLands: ListBuffer[ByteLand]): ListBuffer[Int] = {
     var turnCount = 0
-    val writer = new PrintWriter(new File(outputFileName))
+
+    var negotiationReport:ListBuffer[Int] = ListBuffer()
 
     for (byteLand <- byteLands) {
       while (!byteLand.checkAllyStatusForAllCities()) {
@@ -25,10 +16,10 @@ object unite {
         byteLand.resetEnvoyCountForAllCities()
         turnCount += 1
       }
-      writer.println(turnCount)
+      negotiationReport+=turnCount
       turnCount = 0
     }
-    writer.close()
+    negotiationReport
   }
 
   def uniteAvailableCities(byteLand: ByteLand): Unit = {
